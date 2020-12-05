@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React, { Component } from 'react';
+import firebase from './firebase'
+export class App extends Component {
+  handleClick=()=>{
+   const appVerifier = new firebase.auth.RecaptchaVerifier(
+    "recaptcha-container"
+    );
+    const number = '+251932433954';
+    firebase.auth().signInWithPhoneNumber(number,appVerifier).then(function(e){
+      let code =prompt('enter otp');
+      if(code == null) return;
+      e.confirm(code).then(function(result){
+        console.log(result.user,'user');
+        document.querySelector('label').textContent=result.user.phoneNumber + "number verfied "
+      }).catch((error)=>{
+        console.log(error);
+      })
+    })
+  };
+  render() {
+    return (
+      <div>
+        <div id="recaptcha-container"></div>
+        <label></label>
+        <button
+          onClick={this.handleClick}>
+          clickHere
+        </button>
+      </div>
+    )
+  }
 }
-
-export default App;
+export default App
